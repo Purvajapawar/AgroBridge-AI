@@ -2,11 +2,12 @@ FROM python:3.10
 
 WORKDIR /app
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
-
+# Copy all files (VERY IMPORTANT)
 COPY . .
 
-EXPOSE 8000
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+EXPOSE 10000
 
 CMD ["python", "app.py"]
