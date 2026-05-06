@@ -210,8 +210,15 @@ router.get('/price-prediction', async (req, res) => {
     const { crop, state, expectedPrice } = req.query
     if (!crop || !expectedPrice) return res.status(400).json({ success: false, message: 'Crop type and expected price are required' })
     try {
-      const mlResponse = await axios.post('http://localhost:5001/predict-price', { cropType: crop, expectedPrice: parseInt(expectedPrice), location: state || '' }, { timeout: 5000 })
-      if (mlResponse.data && mlResponse.data.success) return res.json({ success: true, predicted_price: mlResponse.data.predicted_price, suggested_price: mlResponse.data.suggested_price, recommendation: mlResponse.data.recommendation, diff: mlResponse.data.diff, source: 'primary_model' })
+      const mlUrl = process.env.ML_SERVICE_URL || 'https://agrobridge-ml-66im.onrender.com'
+      const mlResponse = await axios.post(
+        `${mlUrl}/predict-price`,
+        { cropType: crop, expectedPrice: parseInt(expectedPrice), location: state || '' },
+        { timeout: 10000 }
+      )
+      if (mlResponse.data && mlResponse.data.success) {
+        return res.json({ success: true, predicted_price: mlResponse.data.predicted_price, suggested_price: mlResponse.data.suggested_price, recommendation: mlResponse.data.recommendation, diff: mlResponse.data.diff, source: 'primary_model' })
+      }
     } catch (mlError) { console.log('ML service unavailable, using fallback model') }
     const fallbackResult = getFallbackPricePrediction(crop, parseInt(expectedPrice), state || '')
     res.json({ success: true, ...fallbackResult })
@@ -220,5 +227,6 @@ router.get('/price-prediction', async (req, res) => {
     res.json({ success: true, ...safeDefault, source: 'safe_default' })
   }
 })
+
 
 module.exports = router

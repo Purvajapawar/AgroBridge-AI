@@ -6,11 +6,13 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
+      // Dev-only convenience. Production must use VITE_API_URL.
       '/api': {
-        target: 'http://localhost:5000',
+        target: process.env.VITE_API_URL || 'http://localhost:5000',
         changeOrigin: true
       }
     }
   }
 })
+
 

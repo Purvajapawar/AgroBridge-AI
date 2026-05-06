@@ -31,8 +31,10 @@ const millRoutes = require('./routes/mill')
 const profileRoutes = require('./routes/profile')
 const paymentRoutes = require('./routes/payments')
 const routeRoutes = require('./routes/routes')
+const mlRoutes = require('./routes/ml')
 
 // Use Routes
+
 app.use('/api/auth', authRoutes)
 app.use('/api/crops', cropRoutes)
 app.use('/api/trader', traderRoutes)
@@ -40,6 +42,8 @@ app.use('/api/mill', millRoutes)
 app.use('/api/profile', profileRoutes)
 app.use('/api/payments', paymentRoutes)
 app.use('/api/routes', routeRoutes)
+app.use('/api/ml', mlRoutes)
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {
