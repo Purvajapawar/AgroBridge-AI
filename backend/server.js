@@ -1,4 +1,7 @@
+require('dotenv').config()
+
 const express = require('express')
+
 const mongoose = require('mongoose')
 const cors = require('cors')
 const bcrypt = require('bcryptjs')
@@ -11,12 +14,18 @@ app.use(cors())
 app.use(express.json())
 
 // MongoDB Connection
-mongoose.connect('mongodb://127.0.0.1:27017/agrobridge')
+const mongoUri = process.env.MONGO_URI
+if (!mongoUri) {
+  console.error('Missing required env var: MONGO_URI')
+}
+
+mongoose.connect(mongoUri)
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.log('MongoDB Error:', err))
 
 // JWT Secret
-const JWT_SECRET = 'agrobridge_ai_secret_key_2024'
+const JWT_SECRET = process.env.JWT_SECRET || 'agrobridge_ai_secret_key_2024'
+
 
 // Import Models
 const User = require('./models/User')
@@ -249,8 +258,9 @@ app.post('/api/debug/accept-deal', async (req, res) => {
 })
 
 // Start Server
-const PORT = 5000
+const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
+
 
